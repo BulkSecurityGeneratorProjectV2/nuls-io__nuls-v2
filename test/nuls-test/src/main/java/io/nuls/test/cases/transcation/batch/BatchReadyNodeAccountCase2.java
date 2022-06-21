@@ -111,31 +111,34 @@ public class BatchReadyNodeAccountCase2 extends CallRemoteTestCase<Void, Long> {
         BatchParam bp = new BatchParam();
         bp.setCount(itemCount);
         bp.setReverse(false);
-        while(true){
-            CountDownLatch latch = new CountDownLatch(nodes.size());
-            for (int i = 0; i < accounts.getList().size(); i++) {
-                String node = nodes.get(i);
-                ThreadUtils.createAndRunThread("batch-transfer-" + i , () -> {
-                    Boolean res = null;
-                    try {
-                        res = doRemoteTest(node, BatchCreateTransferCase2.class, bp);
-                        Log.info("成功发起交易:{}", res);
-                        latch.countDown();
-                    } catch (TestFailException e) {
-                        Log.error(e.getMessage(),e);
-                        latch.countDown();
-                    }
-                });
+        if(true){
+            while(true){
+                CountDownLatch latch = new CountDownLatch(nodes.size());
+                for (int i = 0; i < accounts.getList().size(); i++) {
+                    String node = nodes.get(i);
+                    ThreadUtils.createAndRunThread("batch-transfer-" + i , () -> {
+                        Boolean res = null;
+                        try {
+                            res = doRemoteTest(node, BatchCreateTransferCase2.class, bp);
+                            Log.info("成功发起交易:{}", res);
+                            latch.countDown();
+                        } catch (TestFailException e) {
+                            Log.error(e.getMessage(),e);
+                            latch.countDown();
+                        }
+                    });
+                }
+                try {
+                    latch.await();
+                    TimeUnit.SECONDS.sleep(15);
+                    bp.setReverse(!bp.getReverse());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.info("创建交易完成");
             }
-            try {
-                latch.await();
-                TimeUnit.SECONDS.sleep(15);
-                bp.setReverse(!bp.getReverse());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.info("创建交易完成");
         }
-//        return null;
+
+        return null;
     }
 }

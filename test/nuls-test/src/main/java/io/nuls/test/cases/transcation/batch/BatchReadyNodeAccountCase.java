@@ -33,7 +33,7 @@ import static io.nuls.test.cases.transcation.batch.BatchCreateAccountCase.TRANSF
  * @Description: 功能描述
  */
 @Component
-public class BatchReadyNodeAccountCase extends CallRemoteTestCase<Void,Integer> {
+public class BatchReadyNodeAccountCase extends CallRemoteTestCase<Integer,Integer> {
 
     AccountService accountService = ServiceManager.get(AccountService.class);
 
@@ -61,7 +61,7 @@ public class BatchReadyNodeAccountCase extends CallRemoteTestCase<Void,Integer> 
     }
 
     @Override
-    public Void doTest(Integer total, int depth) throws TestFailException {
+    public Integer doTest(Integer total, int depth) throws TestFailException {
         List<String> nodes = getRemoteNodes();
         int itemCount = total / nodes.size();
         List<BatchParam> params = new ArrayList<>();
@@ -110,6 +110,6 @@ public class BatchReadyNodeAccountCase extends CallRemoteTestCase<Void,Integer> 
             Boolean res = doRemoteTest(node, BatchCreateTransferCase.class, itemCount);
             Log.info("成功发起交易:{}", res);
         }
-        return null;
+        return 0;
     }
 }

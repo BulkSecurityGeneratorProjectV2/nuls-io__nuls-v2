@@ -89,7 +89,7 @@ public class BatchCreateAccountCase2 extends BaseAccountCase<Long, BatchParam> {
             formList.add(account.getList().get(0));
             toList.add(account.getList().get(1));
         }
-        Log.info("创建{}笔交易,成功{}笔，消耗时间:{}", MAX_ACCOUNT ,successTotal, System.currentTimeMillis() - start);
+        Log.info("创建{}笔交易,成功{}笔，消耗时间:{}", total * 2 ,successTotal, System.currentTimeMillis() - start);
         return param.count;
     }
 

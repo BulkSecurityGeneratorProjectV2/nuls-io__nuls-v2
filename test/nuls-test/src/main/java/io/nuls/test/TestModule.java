@@ -21,6 +21,12 @@ import io.nuls.test.cases.Constants;
 import io.nuls.test.cases.TestCase;
 import io.nuls.test.cases.TestCaseIntf;
 import io.nuls.test.cases.TestFailException;
+import io.nuls.test.cases.account.AccountCase;
+import io.nuls.test.cases.account.BackupAccountCase;
+import io.nuls.test.cases.transcation.batch.BatchCreateAccountCase2;
+import io.nuls.test.cases.transcation.batch.BatchParam;
+import io.nuls.test.cases.transcation.batch.BatchTestCase2;
+import io.nuls.test.cases.transcation.batch.BatchTxsCase;
 import io.nuls.test.controller.RpcServerManager;
 import io.nuls.test.utils.LoggerUtil;
 import io.nuls.test.utils.RestFulUtils;
@@ -100,36 +106,47 @@ public class TestModule extends RpcModule {
             }
             System.out.println();
             System.out.println();
-            AtomicBoolean isSuccess = new AtomicBoolean(true);
+            BatchTestCase2 backupAccountCase = SpringLiteContext.getBean(BatchTestCase2.class);
+//            BatchCreateAccountCase2 batchCreateAccountCase2 = SpringLiteContext.getBean(BatchCreateAccountCase2.class);
             try {
-                List<TestCaseIntf> testList = SpringLiteContext.getBeanList(TestCaseIntf.class);
-                testList.forEach(tester->{
-                    TestCase testCase = tester.getClass().getAnnotation(TestCase.class);
-                    if(testCase == null){
-                        return ;
-                    }
-                    if(StringUtils.isNotBlank(System.getProperty("test.case"))){
-                        String testCaseName = System.getProperty("test.case");
-                        if(!testCase.value().equals(testCaseName)){
-                            return ;
-                        }
-                    }
-                    try {
-                        Utils.successDoubleLine("开始测试"+tester.title() + "   " + tester.getClass());
-                        tester.check(null,0);
-                    } catch (TestFailException e) {
-                        Utils.failLine( "【" + tester.title() + "】 测试失败 :" + e.getMessage());
-                        isSuccess.set(false);
-                    }
-                });
-            } catch (Exception e) {
+//                BatchParam bp = new BatchParam();
+//                bp.setCount(100L);
+//                bp.setFormAddressPriKey("ff212f51fc911270f1793f8656e36e9ae48caac130caf7c600f53c1743ff43a5");
+//                batchCreateAccountCase2.check(bp,0);
+                backupAccountCase.check(null,0);
+            } catch (TestFailException e) {
                 e.printStackTrace();
             }
-            if(isSuccess.get()){
-                Utils.successLine(" TEST DONE ");
-            }else{
-                Utils.failLine(" TEST FAIL ");
-            }
+//            AtomicBoolean isSuccess = new AtomicBoolean(true);
+//            try {
+//                List<TestCaseIntf> testList = SpringLiteContext.getBeanList(TestCaseIntf.class);
+//                testList.forEach(tester->{
+//                    TestCase testCase = tester.getClass().getAnnotation(TestCase.class);
+//                    if(testCase == null){
+//                        return ;
+//                    }
+//                    if(StringUtils.isNotBlank(System.getProperty("test.case"))){
+//                        String testCaseName = System.getProperty("test.case");
+//                        if(!testCase.value().equals(testCaseName)){
+//                            return ;
+//                        }
+//                    }
+//                    try {
+//                        Utils.successDoubleLine("开始测试"+tester.title() + "   " + tester.getClass());
+//                        tester.check(null,0);
+//                    } catch (TestFailException e) {
+//                        Utils.failLine( "【" + tester.title() + "】 测试失败 :" + e.getMessage());
+//                        isSuccess.set(false);
+//                    }
+//                });
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            if(isSuccess.get()){
+//                Utils.successLine(" TEST DONE ");
+//            }else{
+//                Utils.failLine(" TEST FAIL ");
+//            }
             System.exit(0);
         }
         return RpcModuleState.Running;

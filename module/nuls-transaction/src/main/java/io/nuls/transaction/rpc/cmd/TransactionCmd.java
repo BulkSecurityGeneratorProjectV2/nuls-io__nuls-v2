@@ -32,9 +32,11 @@ import io.nuls.transaction.model.bo.TxPackage;
 import io.nuls.transaction.model.bo.VerifyLedgerResult;
 import io.nuls.transaction.model.dto.ModuleTxRegisterDTO;
 import io.nuls.transaction.model.po.TransactionConfirmedPO;
+import io.nuls.transaction.rpc.call.LedgerCall;
 import io.nuls.transaction.rpc.call.NetworkCall;
 import io.nuls.transaction.service.ConfirmedTxService;
 import io.nuls.transaction.service.TxService;
+import io.nuls.transaction.storage.UnconfirmedTxStorageService;
 import io.nuls.transaction.utils.TxUtil;
 
 import java.util.*;
@@ -876,5 +878,63 @@ public class TransactionCmd extends BaseCmd {
             chain.getLogger().error(e);
         }
     }
+
+    //----------------------------------------- test cmd ---------------------------------------------
+    /**
+     * 性能测试，新交易简要执行
+     *
+     * 测试 测试 测试 ！！
+     *
+     * @param params
+     * @return Response
+     */
+//    @Autowired
+//    private PackablePool packablePool;
+
+    @Autowired
+    private UnconfirmedTxStorageService unconfirmedTxStorageService;
+    @CmdAnnotation(cmd = "tx_newTx_test", version = 1.0, description = "receive a new transaction")
+    @Parameter(parameterName = "chainId", parameterType = "int")
+    @Parameter(parameterName = "tx", parameterType = "String")
+    public Response newTxTest(Map params) {
+
+        Chain chain = null;
+        try {
+            ObjectUtils.canNotEmpty(params.get("chainId"), TxErrorCode.PARAMETER_ERROR.getMsg());
+            ObjectUtils.canNotEmpty(params.get("tx"), TxErrorCode.PARAMETER_ERROR.getMsg());
+            chain = chainManager.getChain((int) params.get("chainId"));
+            if (null == chain) {
+                throw new NulsException(TxErrorCode.CHAIN_NOT_FOUND);
+            }
+            String txStr = (String) params.get("tx");
+            //将txStr转换为Transaction对象
+            Transaction tx = TxUtil.getInstanceRpcStr(txStr, Transaction.class);
+            //将交易放入待验证本地交易队列中
+            VerifyLedgerResult verifyLedgerResult = LedgerCall.commitUnconfirmedTx(chain, RPCUtil.encode(tx.serialize()));
+            Map<String, Boolean> map = new HashMap<>(TxConstant.INIT_CAPACITY_2);
+            if (!verifyLedgerResult.businessSuccess()) {
+                chain.getLogger().debug(
+                        "coinData not success - code: {}, - reason:{}, type:{} - txhash:{}",
+                        verifyLedgerResult.getErrorCode(), verifyLedgerResult.getErrorCode().getMsg(), tx.getType(), tx.getHash().toHex());
+                map.put("value", false);
+            }
+            if (chain.getPackaging().get()) {
+                packablePool.add(chain, tx);
+//                System.out.println("********* " + packablePool.getPoolSize(chain));
+            }
+            unconfirmedTxStorageService.putTx(chain.getChainId(), tx);
+            //广播完整交易
+            NetworkCall.broadcastTx(chain,tx);
+            map.put("value", true);
+            return success(map);
+        } catch (NulsException e) {
+            errorLogProcess(chain, e);
+            return failed(e.getErrorCode());
+        } catch (Exception e) {
+            errorLogProcess(chain, e);
+            return failed(TxErrorCode.SYS_UNKOWN_EXCEPTION);
+        }
+    }
+    //----------------------------------------- test cmd ---------------------------------------------
 
 }

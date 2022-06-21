@@ -60,7 +60,10 @@ public class FastTransfer {
         Transaction tx = createTx.assemblyTransaction((List<CoinDto>) transferMap.get("inputs"),
                 (List<CoinDto>) transferMap.get("outputs"), (String) transferMap.get("remark"), hash);
         try {
-            newTx(tx);
+            Response res = newTx(tx);
+            if(!res.isSuccess()){
+                LoggerUtil.logger.error("创建交易失败,{}",res.getResponseComment());
+            }
         } catch (Exception e) {
             throw new TestFailException(e.getMessage());
         }

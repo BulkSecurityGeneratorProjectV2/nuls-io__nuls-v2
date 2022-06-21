@@ -22,7 +22,7 @@ public interface TestCaseIntf<T,P> {
             param = initParam();
         }
         if(this.caseType() == CaseType.Test){
-            Utils.success(depthSpace(depth)+"开始测试【"+title()+"】");
+            Utils.success(depthSpace(depth)+"开始测试【"+title()+ this.getClass() + "】");
             T res = doTest(param,depth+1);
             Utils.success(depthSpace(depth) + title() + "测试通过");
             return res;

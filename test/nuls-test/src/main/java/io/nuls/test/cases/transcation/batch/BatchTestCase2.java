@@ -32,6 +32,6 @@ public class BatchTestCase2 extends TestCaseChain {
 
     @Override
     public Object initParam() {
-        return 10000;
+        return 10000L;
     }
 }
