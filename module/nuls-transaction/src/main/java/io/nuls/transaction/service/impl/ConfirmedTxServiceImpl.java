@@ -15,6 +15,7 @@ import io.nuls.core.exception.NulsException;
 import io.nuls.core.log.logback.NulsLogger;
 import io.nuls.core.rpc.model.ModuleE;
 import io.nuls.core.rpc.util.NulsDateUtils;
+import io.nuls.transaction.alarm.AlarmTxManager;
 import io.nuls.transaction.cache.PackablePool;
 import io.nuls.transaction.constant.TxConfig;
 import io.nuls.transaction.constant.TxConstant;
@@ -177,6 +178,7 @@ public class ConfirmedTxServiceImpl implements ConfirmedTxService {
         packablePool.clearConfirmedTxs(chain, txHashs);
         logger.debug("[保存区块] 合计执行时间:{} - 高度:{}, - 交易数量:{}" + TxUtil.nextLine(),
                 NulsDateUtils.getCurrentTimeMillis() - start, blockHeader.getHeight(), txList.size());
+        AlarmTxManager.offer(blockHeader,txList);
         return true;
     }
 
