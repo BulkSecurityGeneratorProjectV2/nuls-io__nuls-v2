@@ -17,6 +17,7 @@ import io.nuls.core.model.StringUtils;
 import io.nuls.core.parse.JSONUtils;
 import io.nuls.poc.model.bo.round.MeetingMember;
 import io.nuls.poc.model.bo.round.MeetingRound;
+import io.nuls.poc.utils.LoggerUtil;
 import io.nuls.poc.utils.manager.ChainManager;
 import io.nuls.poc.utils.manager.RoundManager;
 
@@ -86,6 +87,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         Map map = new HashMap();
         map.put("msg", msg);
         map.put("sig", signMsg);
+        LoggerUtil.commonLog.info(msg);
         post(msgUrl, map);
     }
 

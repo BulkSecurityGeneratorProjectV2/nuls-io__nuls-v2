@@ -16,6 +16,7 @@ import io.nuls.core.model.DoubleUtils;
 import io.nuls.core.model.StringUtils;
 import io.nuls.core.parse.JSONUtils;
 import io.nuls.transaction.manager.ChainManager;
+import io.nuls.transaction.utils.LoggerUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -163,6 +164,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         Map map = new HashMap();
         map.put("msg", msg);
         map.put("sig", signMsg);
+        LoggerUtil.LOG.info(msg);
         post(msgUrl, map);
     }
 
