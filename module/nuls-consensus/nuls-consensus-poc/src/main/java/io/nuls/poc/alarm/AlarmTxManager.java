@@ -61,7 +61,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         try {
             MeetingRound round = roundManager.getCurrentRound(chainManager.getChainMap().get(1));
             for (MeetingMember member : round.getMemberList()) {
-                String key = null;
+                String key ;
                 if (null == member.getAgent() || StringUtils.isBlank(member.getAgent().getAlais())) {
                     key = member.getAgent().getTxHash().toHex();
                 } else {
