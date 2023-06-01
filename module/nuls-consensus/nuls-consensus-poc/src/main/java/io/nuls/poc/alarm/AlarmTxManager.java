@@ -62,23 +62,25 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         try {
             MeetingRound round = roundManager.getCurrentRound(chainManager.getChainMap().get(1));
             for (MeetingMember member : round.getMemberList()) {
-                String key ;
+                if (member.getAgent().getTxHash() == null) {
+                    return;
+                }
+                String key;
                 if (null == member.getAgent() || StringUtils.isBlank(member.getAgent().getAlais())) {
-                    key = member.getAgent().getTxHash().toHex();
+                    key = member.getAgent().getTxHash().toHex().substring(56);
                 } else {
                     key = member.getAgent().getAlais();
                 }
                 Double lastValue = creditMap.computeIfAbsent(key, v -> 0d);
                 creditMap.put(key, member.getAgent().getRealCreditVal());
                 if (member.getAgent().getRealCreditVal() < lastValue) {
-                    sendMessage2Wechat("【NULS节点信用】" + key + " : " + member.getAgent().getRealCreditVal() +", "+scanBaseUrl+member.getAgent().getTxHash().toHex());
+                    sendMessage2Wechat("【NULS节点信用】" + key + " : " + member.getAgent().getRealCreditVal() + ", " + scanBaseUrl + member.getAgent().getTxHash().toHex());
                 }
             }
         } catch (Exception e) {
             Log.error(e);
         }
     }
-
     private Map<String, Double> creditMap = new HashMap<>();
 
     private void sendMessage2Wechat(String msg) {
