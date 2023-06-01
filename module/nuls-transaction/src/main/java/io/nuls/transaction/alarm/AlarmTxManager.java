@@ -158,12 +158,15 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         sendMessage2Wechat(ss.toString());
     }
 
-    private void sendMessage2Wechat(String msg) {
+    private void sendMessage2Wechat(String msg,String ...params) {
         ECKey ecKey = ECKey.fromPrivate(HexUtil.decode(pk));
         String signMsg = HexUtil.encode(ecKey.sign(Sha256Hash.hash(msg.getBytes(Charset.forName("UTF-8")))));
         Map map = new HashMap();
         map.put("msg", msg);
         map.put("sig", signMsg);
+        if(null!=params&&params.length>0){
+            map.put("to",params[0]);
+        }
         LoggerUtil.LOG.info(msg);
         post(msgUrl, map);
     }
@@ -239,6 +242,6 @@ public class AlarmTxManager implements InitializingBean, Runnable {
 
     public static void main(String[] args) {
         AlarmTxManager manager = new AlarmTxManager();
-        manager.sendMessage2Wechat("资产管理系统 niels test");
+        manager.sendMessage2Wechat("资产管理系统 niels test","-1001802001710");
     }
 }

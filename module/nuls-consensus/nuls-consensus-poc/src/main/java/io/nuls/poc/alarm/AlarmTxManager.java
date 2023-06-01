@@ -69,8 +69,8 @@ public class AlarmTxManager implements InitializingBean, Runnable {
                     key = member.getAgent().getAlais();
                 }
                 Double lastValue = creditMap.computeIfAbsent(key, v -> 0d);
+                creditMap.put(key, member.getAgent().getRealCreditVal());
                 if (member.getAgent().getRealCreditVal() < lastValue) {
-                    creditMap.put(key, member.getAgent().getRealCreditVal());
                     sendMessage2Wechat("【NULS节点信用】" + key + " : " + member.getAgent().getRealCreditVal() +", "+scanBaseUrl+member.getAgent().getTxHash().toHex());
                 }
             }
