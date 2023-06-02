@@ -152,7 +152,6 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         ss.append(" ， ");
         ss.append(scanBaseUrl);
         ss.append(tx.getHash().toHex());
-//        LoggerUtil.LOG.error(ss.toString());
         sendMessage2Wechat(ss.toString());
     }
 
