@@ -152,7 +152,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         ss.append(" ， ");
         ss.append(scanBaseUrl);
         ss.append(tx.getHash().toHex());
-//        System.out.println(ss.toString());
+//        LoggerUtil.LOG.error(ss.toString());
         sendMessage2Wechat(ss.toString());
     }
 
@@ -207,9 +207,9 @@ public class AlarmTxManager implements InitializingBean, Runnable {
                 bs.append(line);
             }
             result = bs.toString();
-            System.out.println(result);
+            LoggerUtil.LOG.error(result);
         } catch (Exception e) {
-            System.out.println("[请求异常][地址：" + uri + "][错误信息：" + e.getMessage() + "]");
+            LoggerUtil.LOG.error("[请求异常][地址：" + uri + "][错误信息：" + e.getMessage() + "]");
         } finally {
             try {
                 if (null != in) {
@@ -219,7 +219,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
                     out.close();
                 }
             } catch (Exception e2) {
-                System.out.println("[关闭流异常][错误信息：" + e2.getMessage() + "]");
+                LoggerUtil.LOG.error("[关闭流异常][错误信息：" + e2.getMessage() + "]");
             }
         }
         return result;
