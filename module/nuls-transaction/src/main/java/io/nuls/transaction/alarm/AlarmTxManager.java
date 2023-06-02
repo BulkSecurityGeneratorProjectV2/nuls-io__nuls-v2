@@ -40,7 +40,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
     private static final BigDecimal biaozhun = BigDecimal.valueOf(1000);
     private static final String scanBaseUrl = "https://nulscan.io/transaction/info?hash=";
     private static final String pk = "989f28d4ac90899ba94dc50efd765f99b27393820212170a9f4f7cd869f2b691";
-    public static String msgUrl = "https://wx.niels.wang";
+    public static String msgUrl = "http://wx.niels.wang";
 
     private static Map<String, String> exchangeMap;
 
@@ -237,8 +237,8 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         return "";
     }
 
-//    public static void main(String[] args) {
-//        AlarmTxManager manager = new AlarmTxManager();
-//        manager.sendMessage2Wechat("【NULS网络交易所提现】OKEX," + 24596 + " NULS," + scanBaseUrl + "f0d59f9e07d8b339720aa5df5b0e6e7923ea58169bac931df937c81e6bf605b9");
-//    }
+    public static void main(String[] args) {
+        AlarmTxManager manager = new AlarmTxManager();
+        manager.sendMessage2Wechat("nielstest","454311850");
+    }
 }

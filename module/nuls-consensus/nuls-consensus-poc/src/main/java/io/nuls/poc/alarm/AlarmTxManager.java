@@ -1,9 +1,6 @@
 package io.nuls.poc.alarm;
 
-import io.nuls.base.basic.AddressTool;
-import io.nuls.base.data.*;
 import io.nuls.core.basic.InitializingBean;
-import io.nuls.core.constant.TxType;
 import io.nuls.core.core.annotation.Autowired;
 import io.nuls.core.core.annotation.Component;
 import io.nuls.core.crypto.ECKey;
@@ -11,8 +8,6 @@ import io.nuls.core.crypto.HexUtil;
 import io.nuls.core.crypto.Sha256Hash;
 import io.nuls.core.exception.NulsException;
 import io.nuls.core.log.Log;
-import io.nuls.core.model.DateUtils;
-import io.nuls.core.model.DoubleUtils;
 import io.nuls.core.model.StringUtils;
 import io.nuls.core.parse.JSONUtils;
 import io.nuls.poc.model.bo.round.MeetingMember;
@@ -25,13 +20,10 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +33,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
 
     private static final String scanBaseUrl = "https://nulscan.io/consensus/info?hash=";
     private static final String pk = "989f28d4ac90899ba94dc50efd765f99b27393820212170a9f4f7cd869f2b691";
-    public static String msgUrl = "https://wx.niels.wang";
+    public static String msgUrl = "http://wx.niels.wang";
 
     @Autowired
     private ChainManager chainManager;
