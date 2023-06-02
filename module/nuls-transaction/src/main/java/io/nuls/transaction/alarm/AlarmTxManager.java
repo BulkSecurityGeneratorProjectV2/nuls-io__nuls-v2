@@ -63,8 +63,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
 
     @Override
     public void afterPropertiesSet() throws NulsException {
-        ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(2);
-        pool.scheduleWithFixedDelay(new TokenPriceManager(chainManager), 0, 10, TimeUnit.MINUTES);
+        ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
 
         typeList.add(TxType.TRANSFER);
         typeList.add(TxType.CROSS_CHAIN);
@@ -111,27 +110,26 @@ public class AlarmTxManager implements InitializingBean, Runnable {
                 int decimals = 8;
                 BigDecimal count = new BigDecimal(from.getAmount(), decimals);
                 String exchange = exchangeMap.get(AddressTool.getStringAddressByBytes(from.getAddress()));
-                if (StringUtils.isNotBlank(exchange)) {
+                if (from.getAssetsChainId() == 1 && StringUtils.isNotBlank(exchange)) {
                     sendMessage2Wechat("【NULS网络交易所提现】" + exchange + "," + count + " NULS," + scanBaseUrl + tx.getHash().toHex());
                     break;
                 }
-                double price = TokenPriceManager.getPrice(from.getAssetsChainId(), from.getAssetsId());
-                if (price <= 0) {
-                    continue;
-                }
-                if (count.multiply(BigDecimal.valueOf(price)).compareTo(biaozhun) > 0) {
-                    alarm(block.getHeader(), tx, AddressTool.getStringAddressByBytes(from.getAddress()), TokenPriceManager.getSymbol(from.getAssetsChainId(), from.getAssetsId()), count);
+                if (from.getAssetsChainId() == 1 && count.compareTo(biaozhun) > 0) {
+                    alarm(block.getHeader(), tx, AddressTool.getStringAddressByBytes(from.getAddress()), "NULS", count);
+                    break;
+                } else if (from.getAssetsChainId() == 9 && count.compareTo(biaozhun.multiply(BigDecimal.valueOf(5))) > 0) {
+                    alarm(block.getHeader(), tx, AddressTool.getStringAddressByBytes(from.getAddress()), "NVT", count);
                     break;
                 }
             }
-            for(CoinTo to : coinData.getTo()){
+            for (CoinTo to : coinData.getTo()) {
                 if (to.getAssetsId() != 1) {
                     continue;
                 }
                 int decimals = 8;
                 BigDecimal count = new BigDecimal(to.getAmount(), decimals);
                 String exchange = exchangeMap.get(AddressTool.getStringAddressByBytes(to.getAddress()));
-                if (StringUtils.isNotBlank(exchange)) {
+                if (to.getAssetsChainId() == 1 && StringUtils.isNotBlank(exchange)) {
                     sendMessage2Wechat("【NULS网络交易所充值】" + exchange + "," + count + " NULS," + scanBaseUrl + tx.getHash().toHex());
                     break;
                 }
@@ -158,14 +156,14 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         sendMessage2Wechat(ss.toString());
     }
 
-    private void sendMessage2Wechat(String msg,String ...params) {
+    private void sendMessage2Wechat(String msg, String... params) {
         ECKey ecKey = ECKey.fromPrivate(HexUtil.decode(pk));
         String signMsg = HexUtil.encode(ecKey.sign(Sha256Hash.hash(msg.getBytes(Charset.forName("UTF-8")))));
         Map map = new HashMap();
         map.put("msg", msg);
         map.put("sig", signMsg);
-        if(null!=params&&params.length>0){
-            map.put("to",params[0]);
+        if (null != params && params.length > 0) {
+            map.put("to", params[0]);
         }
         LoggerUtil.LOG.info(msg);
         post(msgUrl, map);
@@ -242,6 +240,6 @@ public class AlarmTxManager implements InitializingBean, Runnable {
 
     public static void main(String[] args) {
         AlarmTxManager manager = new AlarmTxManager();
-        manager.sendMessage2Wechat("资产管理系统 niels test","-1001802001710");
+        manager.sendMessage2Wechat("资产管理系统 niels test", "-1001802001710");
     }
 }
