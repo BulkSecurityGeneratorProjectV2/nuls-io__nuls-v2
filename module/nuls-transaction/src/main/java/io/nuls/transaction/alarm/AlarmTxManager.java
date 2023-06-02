@@ -78,7 +78,7 @@ public class AlarmTxManager implements InitializingBean, Runnable {
             while (true) {
                 Block block = queue.take();
                 if (block.getTxs().isEmpty()) {
-                    return;
+                    continue;
                 }
                 try {
                     executeAlarm(block);
@@ -238,8 +238,8 @@ public class AlarmTxManager implements InitializingBean, Runnable {
         return "";
     }
 
-    public static void main(String[] args) {
-        AlarmTxManager manager = new AlarmTxManager();
-        manager.sendMessage2Wechat("资产管理系统 niels test", "-1001802001710");
-    }
+//    public static void main(String[] args) {
+//        AlarmTxManager manager = new AlarmTxManager();
+//        manager.sendMessage2Wechat("【NULS网络交易所提现】OKEX," + 24596 + " NULS," + scanBaseUrl + "f0d59f9e07d8b339720aa5df5b0e6e7923ea58169bac931df937c81e6bf605b9");
+//    }
 }
