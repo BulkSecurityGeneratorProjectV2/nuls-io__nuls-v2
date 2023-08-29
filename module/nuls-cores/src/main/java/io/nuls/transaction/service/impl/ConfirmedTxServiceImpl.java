@@ -4,7 +4,7 @@ import io.nuls.base.RPCUtil;
 import io.nuls.base.data.BlockHeader;
 import io.nuls.base.data.NulsHash;
 import io.nuls.base.data.Transaction;
-import io.nuls.base.protocol.ProtocolGroupManager;
+import io.nuls.common.NulsCoresConfig;
 import io.nuls.core.constant.BaseConstant;
 import io.nuls.core.constant.TxStatusEnum;
 import io.nuls.core.constant.TxType;
@@ -13,14 +13,10 @@ import io.nuls.core.core.annotation.Component;
 import io.nuls.core.crypto.HexUtil;
 import io.nuls.core.exception.NulsException;
 import io.nuls.core.log.logback.NulsLogger;
-import io.nuls.core.rpc.model.ModuleE;
-import io.nuls.core.rpc.netty.processor.ResponseMessageProcessor;
 import io.nuls.core.rpc.util.NulsDateUtils;
-import io.nuls.transaction.alarm.AlarmTxManager;
+import io.nuls.transaction.alarm.TxAlarmManager;
 import io.nuls.transaction.cache.PackablePool;
-import io.nuls.common.NulsCoresConfig;
 import io.nuls.transaction.constant.TxConstant;
-import io.nuls.transaction.constant.TxContext;
 import io.nuls.transaction.constant.TxErrorCode;
 import io.nuls.transaction.manager.ChainManager;
 import io.nuls.transaction.manager.TxManager;
@@ -179,7 +175,7 @@ public class ConfirmedTxServiceImpl implements ConfirmedTxService {
         packablePool.clearConfirmedTxs(chain, txHashs);
         logger.debug("[保存区块] 合计执行时间:{} - 高度:{}, - 交易数量:{}" + TxUtil.nextLine(),
                 NulsDateUtils.getCurrentTimeMillis() - start, blockHeader.getHeight(), txList.size());
-        AlarmTxManager.offer(blockHeader,txList);
+        TxAlarmManager.offer(blockHeader,txList);
         return true;
     }
 
